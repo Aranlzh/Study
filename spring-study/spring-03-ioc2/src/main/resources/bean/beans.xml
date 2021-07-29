@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--IOC创建对象的方法-->
+    <!--在配置文件加载的时候，容器中管理的对象就已经被加载了-->
+
+    <!--1 无参构造创建对象，默认！-->
+    <!--<bean id="user" class="top.aranlzh.pojo.User">-->
+    <!--    <property name="name" value="阿然"/>-->
+    <!--</bean>-->
+
+    <!--2 要使用有参构造创建对象-->
+    <!--2.1 下标赋值-->
+    <!--<bean id="user" class="top.aranlzh.pojo.User">-->
+    <!--    <constructor-arg index="0" value="然"/>-->
+    <!--    <constructor-arg index="1" value="24"/>-->
+    <!--</bean>-->
+
+    <!--2.2 通过类型。不建议使用，同一个类型只能有一个。-->
+    <!--<bean id="user" class="top.aranlzh.pojo.User">-->
+    <!--    <constructor-arg type="java.lang.String" value="ricardo"/>-->
+    <!--    <constructor-arg type="int" value="24"/>-->
+    <!--</bean>-->
+
+    <!--2.3 直接通过参数名赋值-->
+
+    <beans>
+        <alias name="user" alias="sys_user"/>
+        <bean id="user" class="top.aranlzh.pojo.User">
+            <constructor-arg name="name" value="ran"/>
+            <constructor-arg name="age" value="24"/>
+        </bean>
+        <!--
+        id:bean的唯一标识符，也就是相当于我们学的对象名
+        class:bean对象所对应的全限报名：包名+类型
+        name:也是别名，而且name可以同时取多个别面馆
+        -->
+        <bean id="userT" class="top.aranlzh.pojo.UserT" name="user2 u1,u2"/>
+    </beans>
+
+
+</beans>

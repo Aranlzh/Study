@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="address" class="top.aranlzh.pojo.Address">
+        <property name="address" value="深圳"/>
+    </bean>
+
+    <bean id="student" class="top.aranlzh.pojo.Student">
+        <!--第一种，普通值注入，value-->
+        <property name="name" value="阿然"/>
+
+        <!--第二种，bean注入，ref-->
+        <property name="address" ref="address"/>
+
+        <!--数组注入，ref-->
+        <property name="books">
+            <array>
+                <value>西游记</value>
+                <value>水浒传</value>
+                <value>红楼梦</value>
+                <value>三国演义</value>
+            </array>
+        </property>
+
+        <!--List-->
+        <property name="hobbys">
+            <list>
+                <value>听歌</value>
+                <value>打代码</value>
+            </list>
+        </property>
+
+        <!--Map-->
+        <property name="card">
+            <map>
+                <entry key="身份证" value="11"/>
+                <entry key="学生证" value="22"/>
+                <entry key="驾驶证" value="33"/>
+            </map>
+        </property>
+
+        <!--Set-->
+        <property name="games">
+            <set>
+                <value>LOL</value>
+                <value>COD</value>
+            </set>
+        </property>
+
+        <!--properties-->
+        <property name="info">
+            <props>
+                <prop key="email">***@outlook.com</prop>
+                <prop key="phone">13612345678</prop>
+            </props>
+        </property>
+
+        <!--null-->
+        <!--<property name="wife" value=""/>-->
+        <property name="wife">
+            <null/>
+        </property>
+    </bean>
+
+</beans>
