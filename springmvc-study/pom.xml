@@ -16,7 +16,6 @@
         <module>springmvc-05-json</module>
         <module>springmvc-06-ajax</module>
         <module>springmvc-07-intercepter</module>
-        <module>springmvc-08-file</module>
     </modules>
 
     <dependencies>

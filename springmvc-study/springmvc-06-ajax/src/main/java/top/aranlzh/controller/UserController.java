@@ -13,9 +13,9 @@ public class UserController {
     @RequestMapping("/a2")
     public List<User> ajax2(){
         List<User> list = new ArrayList<User>();
-        list.add(new User("秦疆1号",3,"男"));
-        list.add(new User("秦疆2号",3,"男"));
-        list.add(new User("秦疆3号",3,"男"));
+        list.add(new User("1号",3,"男"));
+        list.add(new User("2号",3,"男"));
+        list.add(new User("3号",3,"男"));
         return list;
     }
 
