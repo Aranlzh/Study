@@ -469,7 +469,7 @@ public class RedirectServlet extends HttpServlet {
 * 重定向的时候，url地址栏会发生变化；
 ![转发与重定向](img/redirect&forward.png)
 ### 5.HttpServletRequest
-HttpServletRequest代表客户端的请求，用户通过http协议访问服务器，HTTP请求中的所有信息会被封装到HttpServletRequest，通过HttpServletRequest的方法，获取客户端的所有信息
+HttpServletRequest代表客户端的请求，用户通过http协议访问服务器，HTTP请求中的所有信息会被封装到HttpServletRequest，通过HttpServletRequest的方法，获取客户端的所有信息  
 ![request的方法1](img/request1.png)
 ![request的方法2](img/request2.png)
 
