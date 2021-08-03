@@ -18,7 +18,7 @@ public class TcpFileUploadClient {
             // 2. 创建一个输出流
             os = socket.getOutputStream();
             // 3. 文件流
-            fis = new FileInputStream(new File("aranlzh.jpg"));
+            fis = new FileInputStream(new File("test.jpg"));
             // 4. 写出文件
             byte[] buffer = new byte[1024];
             int len;
