@@ -467,9 +467,11 @@ public class RedirectServlet extends HttpServlet {
 不同点：
 * 请求转发的时候，url不会产生变化；
 * 重定向的时候，url地址栏会发生变化；
+
 ![转发与重定向](img/redirect&forward.png)
 ### 5.HttpServletRequest
-HttpServletRequest代表客户端的请求，用户通过http协议访问服务器，HTTP请求中的所有信息会被封装到HttpServletRequest，通过HttpServletRequest的方法，获取客户端的所有信息  
+HttpServletRequest代表客户端的请求，用户通过http协议访问服务器，HTTP请求中的所有信息会被封装到HttpServletRequest，通过HttpServletRequest的方法，获取客户端的所有信息
+  
 ![request的方法1](img/request1.png)
 ![request的方法2](img/request2.png)
 
@@ -511,8 +513,532 @@ public class LoginServlet extends HttpServlet {
     }
 }
 ```
-### 6.Cookie
+## Cookie & Session
+###1. 会话
+**会话**：用户打开一个浏览器，点击了很多超链接，访问多个web资源，关闭浏览器，这个过程可以称之为会话。
 
-### 7.Session
+**有状态会话**：你访问一个网站，再次访问网站的时候，网站知道你来过，称之为有状态会话。
+1. 服务端给客户端一个信件，客户端下次访问服务器带上信件就可以了；cookie
+2. 服务器登记你来过了，下次你来的时候我来匹配你；session
+
+###2. 保存会话的两种技术
+**Cookie**
+* 客户端技术（响应，请求）
+
+**Session**
+* 服务器技术，利用这个技术，可以保存用户的会话信息，我们可以把信息或者数据放在session中！
+
+常常用于：网站登陆后，下次不用再登陆了，第二次访问直接就上去
+###3. Cookie
+![Cookie](img/cookie.png)
+1. 从请求中拿到cookie信息
+2. 服务器响应给客户端cookie
+
+```java
+// 获得cookie
+Cookie[] cookies = req.getCookies();
+// 获得cookie中的key
+cookie.getName();
+// 获得cookie中的value
+cookie.getValue();
+// 新建一个cookie
+Cookie cookie = new Cookie("lastLoginTime", System.currentTimeMillis()+"");
+// 设置cookie有效期为24小时
+cookie.setMaxAge(24*60*60); 
+// 响应给客户端
+resp.addCookie(cookie);
+```
+
+**Cookie：一般会保存在本地的用户目录下AppData**
+
+一个网站Cookie是否存在上线？
+* 一个Cookie只能保存一个信息；
+* 一个web站点可以给浏览器发送多个Cookie，最多存放20个Cookie；
+* Cookie大小有限制 4kb
+* 300个Cookie浏览器上限
+
+删除Cookie：
+* 不设置有效期，关闭浏览器，自动失效；
+* 设置有效期时间为0；
+
+###4. Session（重点）
+
+![session](img/session2.png)
+
+**什么是Session：**
+* 服务器会给每一个用户（浏览器）创建一个Session对象；
+* 一个Session独占一个浏览器，只要浏览器没有关闭，这个Session就存在；
+* 用户登录之后，整个网站它都可以访问。-->保存用户信息等
+
+![session的方法1](img/session1.png)
+
+**session和cookie的区别：**
+* Cookie是把用户的数据写给用户的浏览器，浏览器保存（可以保存多个）
+* Session把用户的数据写到用户独占的Session中，服务端保存（保存重要的信息，减少服务器的资源浪费）
+* Session对象由服务创建
+
+**使用场景：**
+* 保存一个登录用户的信息；
+* 购物车信息；
+* 在整个网站中经常会使用的数据，我们将它保存在Session中；
+
+**使用Session：**
+```java
+public class SessionDemo01 extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        // 解决乱码问题
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html;charset=UTF-8");
+
+        // 得到Session
+        HttpSession session = req.getSession();
+
+        // 给Session中存东西
+        // session.setAttribute("name","阿然");
+        session.setAttribute("name",new Person("阿然",24));
+
+        // 获取session的ID
+        String sessionId = session.getId();
+        // 判断session是不是新建的
+        if (session.isNew()) {
+            resp.getWriter().write("session创建成功，ID："+sessionId);
+        } else {
+            resp.getWriter().write("session已经在服务器中存在，ID："+sessionId);
+        }
+
+        // Session创建的时候做了什么事情
+        // Cookie cookie = new Cookie("JSESSIONID",sessionId);
+        // resp.addCookie(cookie);
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
+    }
+}
+
+/**
+// 从Session中取东西
+HttpSession session = req.getSession();
+// String name = (String) session.getAttribute("name");
+Person person = (Person) session.getAttribute("name");
+
+
+// 删除session
+session.removeAttribute("name");
+// 手动注销session
+session.invalidate();
+**/
+```
+
+**会话自动过期:web.xml配置**
+```xml
+<!--设置session的默认失效时间-->
+<session-config>
+    <!--15分钟后session自动失效，以分钟为单位-->
+    <session-timeout>15</session-timeout>
+</session-config>
+```
+
+多用户访问是需要ServletContext来进行存储（再jsp中为applicationContext）
+
+![多用户](img/session3.png)
 
 ## JSP
+###1. 什么是JSP
+Java Sevlet Page：Java服务器端页面，也和Servlet一样，用户动态Web技术！
+
+最大的特点：
+* 写JSP就像在写HTML
+* 区别：
+  * HTML只给用户提供静态数据
+  * JSP页面可以嵌入Java代码，为用户提供动态数据
+
+###2. JSP原理
+思路：JSP到底怎么执行的！
+* 代码层面没有任何问题
+* 服务器内部工作  
+    tomcat中有一个work目录；  
+    IDEA中使用tomcat的会在IDEA的tomcat中生成一个work目录；
+    ![idea](img/idea.png)
+    发现页面转变成了Java程序（IDEA的tomcat目录下项目->/work/Catalina/localhost/ROOT/org/apache/jsp）  
+    ![idea](img/jsp.png)
+
+**浏览器向服务器发送请求，不管访问什么资源，其实都是在访问Servlet！**  
+JSP最终也会被转换成为一个Java类！  
+![idea](img/jsp1.png)
+
+**JSP本质上就是一个Servlet**
+```java
+public void _jspInit() {}
+public void _jspDestory() {}
+public void _jspService(final javax.servlet.http.HttpServletRequest request,
+    final javax.servlet.http.HttpServletResponse response) {}
+    throws java.io.IOException, javax.servlet.ServletException {……}
+
+```
+1. 判断请求
+2. 内置一些对象
+    ```java
+    final javax.servlet.jsp.PageContext pageContext;    // 页面上下文
+    javax.servlet.http.HttpSession session = null;      // session
+    final javax.servlet.ServletContext application;     // applicationContext
+    final javax.servlet.ServletConfig config;           // config
+    javax.servlet.jsp.JspWriter out = null;             // out
+    final javax.lang.Object page = this;                // page：当前
+    HttpServletRequest request;                         // 请求
+    HttpServletResponse response;                       // 响应
+    ```
+3. 输出页面前增加的代码
+    ```java
+    response.setContentType("text\html");
+    pageContext = _jspFactory.getPageContext(this,request,response,null,true,8192,true);
+    _jspx_page_content = pageContext;
+    application = pageContext.getServletConfig();
+    session = pageContext.getSession();
+    out = pageContext.getOut();
+    _jspx_out = out;
+    
+    out.write(……);
+    ```
+4. 以上的这些个对象我们可以在JSP页面中直接使用
+
+![idea](img/jsp2.png)
+
+在JSP页面中：  
+只要是<%%>中的Java代码就会原封不动的输出；  
+如果是HTML代码，就会被转换成：
+```java
+out.write("<html>\r\n");
+```
+这样的格式，输出到前端！
+###3. JSP基础语法
+JSP作为Java技术的一种应用，它拥有一些自己扩充的语法！Java的所有语法也都支持！
+
+**JSP表达式**
+```jsp
+  <%--JSP表达式
+  作用：用来将程序的输出，输出到客户端
+  <%= 变量或者表达式%>
+  --%>
+  <%= new java.util.Date()%>
+```
+
+**JSP脚本片段**
+```jsp
+  <%--jsp脚本片段--%>
+  <%
+    int sum = 0;
+    for (int i = 0; i < 100; i++) {
+      sum += i;
+    }
+    out.println("<h1>Sum="+sum+"</h1>");
+  %>
+```
+
+**JSP脚本片段**
+```jsp
+  <%--jsp脚本片段--%>
+  <%
+    int sum = 0;
+    for (int i = 0; i < 100; i++) {
+      sum += i;
+    }
+    out.println("<h1>Sum="+sum+"</h1>");
+  %>
+```
+
+**脚本片段的再实现**
+```jsp
+  <%
+    int x = 10;
+    out.println(x);
+  %>
+  <p>这是一个JSP文档</p>
+  <%
+    int y = 10;
+    out.println(y);
+    out.println(x+y);
+  %>
+
+  <%--在代码中嵌入HTML元素--%>
+  <%
+    for (int i = 0; i < 5; i++) {
+  %>
+  <h1>Hello,World!<%=i%></h1>
+  <%
+    }
+  %>
+```
+
+**JSP声明**
+```jsp
+  <%!
+    static {
+      System.out.println("Loading Servlet!");
+    }
+
+    private int globalVar = 0;
+
+    public void functionA() {
+      System.out.println("进入了方法functionA");
+    }
+  %>
+```
+JSP声明：会被编译到JSP生成Java的类中！其他的，就会被生成到_jspService方法中！  
+在JSP，嵌入Java代码即可
+```jsp
+<%%>
+<%=%>
+<%!%>
+<%--注释--%>
+```
+
+JSP的注释，不会在客户端显示，HTML就会。
+
+###4. JSP指令
+**JSP指令的概念**
+
+JSP指令（derective）是为JSP引擎而设计的，它们并不直接产生任何可见的输出，而只是告诉引擎如何处理JSP页面中的其余部分
+
+**JSP指令的基本语法格式**
+
+```jsp
+<%--
+<%@ 指令 属性名=“值” %>
+例如：（其中属性名部分是大小写敏感的）
+--%>
+<%@ page contentType=“text/html;charset=gb2312” %>
+```
+
+如果在JSP页面中设置同一条指令的多个属性，可以使用多条指令语句单独设置每个属性，也可以使用同一条指令语句设置该指令的多个属性
+举例：
+- 方式一：
+```jsp
+<%@ page contentType=“text/html;charset=gb2312” %>
+<%@ page import=“java.util.Data”%>
+```
+
+- 方式二：
+```jsp
+<%@ page contentType=“text/html;charset=gb2312” import=“java.util.Data”%>
+```
+
+**page指令**
+- page指令的概念
+
+page指令用于定义JSP页面的各种属性，无论page指令出现在什么位置，它的作用对象都是整个页面，page指令一般放在整个JSP页面的起始位置
+
+- page指令的完整语法
+```jsp
+<%@page
+[session=“true|false”]
+[errorPage=“reletive_url”]
+[IsErrorPage=“true|false”]
+[contextType=“text/html”];charest=UTF-8
+%>
+```
+
+**几个重要的属性**
+
+* import属性
+
+    需要导入的类
+
+* session属性
+
+    指定当前页面的session隐藏变量是否可用，也可以说访问当前页面时是否一定要生成HttpSession对象。
+
+
+* errorPage和isErrorPage
+
+    * errorPage：指定若当前页面出现错误实际的响应页面是什么。
+    
+        ```jsp
+        <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+        <html>
+        
+        <%--定制错误页面--%>
+        <%@ page errorPage="error/500.jsp" %>
+        
+        <%--或者使用配置的方法统一配置--%>
+        <%--<error-page>--%>
+        <%--    <error-code>500</error-code>--%>
+        <%--    <location>/error/500.jsp</location>--%>
+        <%--</error-page>--%>
+        
+        <head>
+            <title>Title</title>
+        </head>
+        <body>
+        
+        <%
+            int x=1/0;
+        %>
+        
+        </body>
+        </html>
+        ```
+    
+    * isErrorPage：指定是不是错误处理页面，可以使用Exception隐含变量，注意：若指定isErrorPage=true，并能使用exception方法了，一般不建议直接访问该页面
+    
+        ```jsp
+        <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+        
+        <%--指定是不是错误处理页面，可以使用Exception隐含变量--%>
+        <%@ page isErrorPage="true" %>
+        
+        <html>
+        <head>
+            <title>Title</title>
+        </head>
+        <body>
+        Error Message <%=exception.getMessage()%>
+        <img src="../image/500.jpg" style="width: 100%" alt="500">
+        </body>
+        </html>
+        ```
+    
+        ![error](img/error.png)
+    
+    * 不直接访问的原因
+        
+        对于tomcat而言，WEB-INF的文件是不能通过在浏览器输地址访问的。可以通过**转发**的方式来访问。
+
+    * 在web.xml中也可以配置
+        
+        ```xml
+        <error-page>
+            <error-code>404</error-code>
+            <location>/WEB-INF/error/404.jsp</location>
+        </error-page>
+        ```     
+    
+* contentType:
+
+    指定当前页面的响应类型，实际调用的是response.setContentType(“text/html;charset=UTF-8”);
+    
+    通常情况下取值text/html;charset=UTF-8。
+    
+    charset指定返回页面的字符编码。
+      
+* pageEncoding:指定当前页面的字符编码，通常情况下该值和ContentType的值一样
+
+###5. 九大内置对象
+* PageContext 存东西
+* Request 存东西
+* Response
+* Session 存东西
+* Application 【ServletContext】 存东西
+* Config 【ServletConfig】
+* Out
+* Page
+* Exception
+
+```java
+// 作用域：page->request->session->application
+request.setAttribute("name1","1号"); // 保存的数据只在一次请求中有效，请求转发会携带这个数据
+session.setAttribute("name2","2号"); // 保存的数据只在一次会话中有效，从打开浏览器到关闭浏览器
+pageContext.setAttribute("name3","3号"); // 保存的数据只在一个页面中有效
+application.setAttribute("name4","4号"); // 保存的数据只在服务器中有效，从打开服务器到关闭服务器
+```
+
+request：客户端向服务器发送请求，产生的数据，用户看完就没用了，比如：新闻，用户看完没用的！
+
+session：客户端向服务器发送请求，产生的数据，客户用完一会还有用，比如：未登录的购物车
+
+application：客户端向服务器发送请求，产生的数据，一个用户用完了，其他用户还可能使用，比如：聊天记录
+
+###6. JSP标签、JSTL标签、EL表达式
+```xml
+<dependency>
+    <groupId>javax.servlet.jsp.jstl</groupId>
+    <artifactId>jstl-api</artifactId>
+    <version>1.2</version>
+</dependency>
+<dependency>
+    <groupId>taglibs</groupId>
+    <artifactId>standard</artifactId>
+    <version>1.1.2</version>
+</dependency>
+```
+
+####JSP标签：
+
+![error](img/jsptag.png)
+
+```jsp
+<jsp:include page="WEB-INF/common/header.jsp"/>
+<jsp:forward page="PageContextDemo02.jsp">
+    <jsp:param name="name" value="Ricardo.M.Lu"/>
+    <jsp:param name="age" value="24"/>
+</jsp:forward>
+```
+
+####JSTL标签:
+
+JSTL标签库的使用是为了弥补HTML标签的不足；它自定义许多标签，可以供我们使用，标签的功能和Java代码一样！
+
+使用步骤：
+
+1. 引入对应的taglib
+2. 使用其中的方法
+
+**标签库**
+
+* 核心标签 
+ 
+```jsp
+<%@ taglib prefix="c" 
+           uri="http://java.sun.com/jsp/jstl/core" %>
+```
+
+![error](img/jstl_core.png)
+
+* 格式化标签：用来格式化并输出文本、日期、时间、数字。
+
+```jsp
+<%@ taglib prefix="fmt" 
+           uri="http://java.sun.com/jsp/jstl/fmt" %>
+```
+
+![error](img/jstl_fmt.png)
+
+* SQL标签：提供了与关系型数据库（Oracle，MySQL，SQL Server等等）进行交互的标签。
+
+```jsp
+<%@ taglib prefix="sql" 
+           uri="http://java.sun.com/jsp/jstl/sql" %>
+```
+
+![error](img/jstl_sql.png)
+
+* XML标签：提供了创建和操作XML文档的标签。
+
+```jsp
+<%@ taglib prefix="x" 
+           uri="http://java.sun.com/jsp/jstl/xml" %>
+```
+
+![error](img/jstl_xml.png)
+
+* JSTL函数：包含一系列标准函数，大部分是通用的字符串处理函数。
+
+```jsp
+<%@ taglib prefix="fn" 
+           uri="http://java.sun.com/jsp/jstl/functions" %>
+```
+
+![error](img/jstl_fn.png)
+
+####EL表达式：${}
+
+* **获取数据**
+* **执行运算**
+* **获取web开发的常用对象**
+* ~~调用Java方法~~
+

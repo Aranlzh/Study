@@ -10,6 +10,8 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>javaweb-01-servlet</module>
+        <module>javaweb-02-session-cookie</module>
+        <module>javaweb-03-jsp</module>
     </modules>
 
     <dependencies>
