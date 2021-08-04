@@ -1,5 +1,5 @@
-#JavaWeb
-##Servlet
+# JavaWeb
+## Servlet
 ### 1.Servlet原理
 Servlet是由Web服务器调用，web服务器在收到浏览器请求后，会：
 ![Servlet原理](img/Servlet.png)
@@ -514,14 +514,14 @@ public class LoginServlet extends HttpServlet {
 }
 ```
 ## Cookie & Session
-###1. 会话
+### 1. 会话
 **会话**：用户打开一个浏览器，点击了很多超链接，访问多个web资源，关闭浏览器，这个过程可以称之为会话。
 
 **有状态会话**：你访问一个网站，再次访问网站的时候，网站知道你来过，称之为有状态会话。
 1. 服务端给客户端一个信件，客户端下次访问服务器带上信件就可以了；cookie
 2. 服务器登记你来过了，下次你来的时候我来匹配你；session
 
-###2. 保存会话的两种技术
+### 2. 保存会话的两种技术
 **Cookie**
 * 客户端技术（响应，请求）
 
@@ -529,7 +529,7 @@ public class LoginServlet extends HttpServlet {
 * 服务器技术，利用这个技术，可以保存用户的会话信息，我们可以把信息或者数据放在session中！
 
 常常用于：网站登陆后，下次不用再登陆了，第二次访问直接就上去
-###3. Cookie
+### 3. Cookie
 ![Cookie](img/cookie.png)
 1. 从请求中拿到cookie信息
 2. 服务器响应给客户端cookie
@@ -561,7 +561,7 @@ resp.addCookie(cookie);
 * 不设置有效期，关闭浏览器，自动失效；
 * 设置有效期时间为0；
 
-###4. Session（重点）
+### 4. Session（重点）
 
 ![session](img/session2.png)
 
@@ -649,7 +649,7 @@ session.invalidate();
 ![多用户](img/session3.png)
 
 ## JSP
-###1. 什么是JSP
+### 1. 什么是JSP
 Java Sevlet Page：Java服务器端页面，也和Servlet一样，用户动态Web技术！
 
 最大的特点：
@@ -658,7 +658,7 @@ Java Sevlet Page：Java服务器端页面，也和Servlet一样，用户动态We
   * HTML只给用户提供静态数据
   * JSP页面可以嵌入Java代码，为用户提供动态数据
 
-###2. JSP原理
+### 2. JSP原理
 思路：JSP到底怎么执行的！
 * 代码层面没有任何问题
 * 服务器内部工作  
@@ -716,7 +716,7 @@ public void _jspService(final javax.servlet.http.HttpServletRequest request,
 out.write("<html>\r\n");
 ```
 这样的格式，输出到前端！
-###3. JSP基础语法
+### 3. JSP基础语法
 JSP作为Java技术的一种应用，它拥有一些自己扩充的语法！Java的所有语法也都支持！
 
 **JSP表达式**
@@ -800,7 +800,7 @@ JSP声明：会被编译到JSP生成Java的类中！其他的，就会被生成�
 
 JSP的注释，不会在客户端显示，HTML就会。
 
-###4. JSP指令
+### 4. JSP指令
 **JSP指令的概念**
 
 JSP指令（derective）是为JSP引擎而设计的，它们并不直接产生任何可见的输出，而只是告诉引擎如何处理JSP页面中的其余部分
@@ -928,7 +928,7 @@ page指令用于定义JSP页面的各种属性，无论page指令出现在什么
       
 * pageEncoding:指定当前页面的字符编码，通常情况下该值和ContentType的值一样
 
-###5. 九大内置对象
+### 5. 九大内置对象
 * PageContext 存东西
 * Request 存东西
 * Response
@@ -953,7 +953,7 @@ session：客户端向服务器发送请求，产生的数据，客户用完一�
 
 application：客户端向服务器发送请求，产生的数据，一个用户用完了，其他用户还可能使用，比如：聊天记录
 
-###6. JSP标签、JSTL标签、EL表达式
+### 6. JSP标签、JSTL标签、EL表达式
 ```xml
 <dependency>
     <groupId>javax.servlet.jsp.jstl</groupId>
@@ -967,7 +967,7 @@ application：客户端向服务器发送请求，产生的数据，一个用户
 </dependency>
 ```
 
-####JSP标签：
+#### JSP标签：
 
 ![error](img/jsptag.png)
 
@@ -979,7 +979,7 @@ application：客户端向服务器发送请求，产生的数据，一个用户
 </jsp:forward>
 ```
 
-####JSTL标签:
+#### JSTL标签:
 
 JSTL标签库的使用是为了弥补HTML标签的不足；它自定义许多标签，可以供我们使用，标签的功能和Java代码一样！
 
@@ -1035,7 +1035,7 @@ JSTL标签库的使用是为了弥补HTML标签的不足；它自定义许多标
 
 ![error](img/jstl_fn.png)
 
-####EL表达式：${}
+#### EL表达式：${}
 
 * **获取数据**
 * **执行运算**
