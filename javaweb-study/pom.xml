@@ -12,6 +12,7 @@
         <module>javaweb-01-servlet</module>
         <module>javaweb-02-session-cookie</module>
         <module>javaweb-03-jsp</module>
+        <module>javeweb-04-filter</module>
     </modules>
 
     <dependencies>

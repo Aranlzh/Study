@@ -1,5 +1,15 @@
 # JavaWeb
+
+Servlet和JSP都可以写代码，为了便于维护和使用：
+
+Servlet专注于处理请求以及控制视图跳转
+
+JSP专注于显示数据
+
+
+
 ## Servlet
+
 ### 1.Servlet原理
 Servlet是由Web服务器调用，web服务器在收到浏览器请求后，会：
 ![Servlet原理](img/Servlet.png)
@@ -57,6 +67,7 @@ Servlet是由Web服务器调用，web服务器在收到浏览器请求后，会�
        <url-pattern>*.do</url-pattern>
     </servlet-mapping>
     ```
+
 ### 3.ServletContext
 #### 共享数据
 在HelloServlet中保存的数据，可以在另外一个Servlet中拿到  
@@ -469,9 +480,10 @@ public class RedirectServlet extends HttpServlet {
 * 重定向的时候，url地址栏会发生变化；
 
 ![转发与重定向](img/redirect&forward.png)
+
 ### 5.HttpServletRequest
 HttpServletRequest代表客户端的请求，用户通过http协议访问服务器，HTTP请求中的所有信息会被封装到HttpServletRequest，通过HttpServletRequest的方法，获取客户端的所有信息
-  
+
 ![request的方法1](img/request1.png)
 ![request的方法2](img/request2.png)
 
@@ -513,7 +525,11 @@ public class LoginServlet extends HttpServlet {
     }
 }
 ```
+
+
+
 ## Cookie & Session
+
 ### 1. 会话
 **会话**：用户打开一个浏览器，点击了很多超链接，访问多个web资源，关闭浏览器，这个过程可以称之为会话。
 
@@ -529,6 +545,7 @@ public class LoginServlet extends HttpServlet {
 * 服务器技术，利用这个技术，可以保存用户的会话信息，我们可以把信息或者数据放在session中！
 
 常常用于：网站登陆后，下次不用再登陆了，第二次访问直接就上去
+
 ### 3. Cookie
 ![Cookie](img/cookie.png)
 1. 从请求中拿到cookie信息
@@ -648,7 +665,10 @@ session.invalidate();
 
 ![多用户](img/session3.png)
 
+
+
 ## JSP
+
 ### 1. 什么是JSP
 Java Sevlet Page：Java服务器端页面，也和Servlet一样，用户动态Web技术！
 
@@ -716,6 +736,7 @@ public void _jspService(final javax.servlet.http.HttpServletRequest request,
 out.write("<html>\r\n");
 ```
 这样的格式，输出到前端！
+
 ### 3. JSP基础语法
 JSP作为Java技术的一种应用，它拥有一些自己扩充的语法！Java的所有语法也都支持！
 
@@ -906,17 +927,17 @@ page指令用于定义JSP页面的各种属性，无论page指令出现在什么
         ![error](img/error.png)
     
     * 不直接访问的原因
-        
+      
         对于tomcat而言，WEB-INF的文件是不能通过在浏览器输地址访问的。可以通过**转发**的方式来访问。
 
     * 在web.xml中也可以配置
-        
+      
         ```xml
         <error-page>
             <error-code>404</error-code>
             <location>/WEB-INF/error/404.jsp</location>
         </error-page>
-        ```     
+        ```
     
 * contentType:
 
@@ -925,7 +946,7 @@ page指令用于定义JSP页面的各种属性，无论page指令出现在什么
     通常情况下取值text/html;charset=UTF-8。
     
     charset指定返回页面的字符编码。
-      
+    
 * pageEncoding:指定当前页面的字符编码，通常情况下该值和ContentType的值一样
 
 ### 5. 九大内置对象
@@ -985,13 +1006,14 @@ JSTL标签库的使用是为了弥补HTML标签的不足；它自定义许多标
 
 使用步骤：
 
-1. 引入对应的taglib
-2. 使用其中的方法
+* 引入对应的taglib
+* 使用其中的方法
+* **在Tomcat中也需要引入jstl的包，否则会报错：JSTL解析错误**
 
 **标签库**
 
 * 核心标签 
- 
+
 ```jsp
 <%@ taglib prefix="c" 
            uri="http://java.sun.com/jsp/jstl/core" %>
@@ -1041,4 +1063,261 @@ JSTL标签库的使用是为了弥补HTML标签的不足；它自定义许多标
 * **执行运算**
 * **获取web开发的常用对象**
 * ~~调用Java方法~~
+
+
+
+## JavaBean（实体类）
+
+JavaBean有特定的写法：
+* 必须要有一个无参构造
+* 属性必须私有化
+* 必须有对应的get/set方法；
+
+一般用来和数据库字段做映射 ORM
+
+ORM：对象关系映射
+* 表 --> 类
+* 字段 --> 属性
+* 行记录 --> 对象
+
+people表
+
+| id | name | age | address |
+|:----:|:----:|:----:|:----:|
+| 1 | 1号 | 24 | 深圳 |
+| 2 | 2号 | 25 | 深圳 |
+| 3 | 3号 | 23 | 深圳 |
+
+实体类 People.java
+
+```java
+class Peopole {
+    private int id;
+    private String name;
+    private int age;
+    private String address;
+}
+```
+
+
+
+## MVC三层架构
+
+什么是MVC：Model View Controller
+
+### 1. 早些年
+
+```mermaid
+graph LR
+A(人) --> B(控制器:Controller<br>Servlet<br>1.接收用户的请求<br>2.响应给客户端内容<br>3.重定向或者转发)
+    A --> C(视图层:View<br>JSP<br>1.展示数据<br>2.提供供操作的请求)
+    B --> D("JavaBean<br>(pojo)<br>(entity)")
+    C --> D
+    D -->|JDBC| E(数据库)
+```
+
+用户直接访问控制层，控制层就可以直接操作数据库；
+```text
+servlet--CRUD-->数据库
+弊端：程序十分臃肿，不利于维护
+servlet的代码中：处理请求、响应、视图跳转、处理JDBC、处理业务代码、处理逻辑代码
+
+架构：没有什么是加一层解决不了的！
+程序员调用
+|
+JDBC
+|
+Mysql Oracle SQL Server
+```
+
+
+
+### 2.MVC三层架构
+
+Model：JavaBean。包括Service、Dao
+
+控制业务操作、保存数据、修改数据。删除数据。查询数据
+
+
+```mermaid
+graph LR
+A(人) --> C(视图层:View<br>JSP<br>1.展示数据<br>2.提供用户操作)
+	C --> |返回给用户的页面中就会存在数据| A
+    C --> |操作| B("控制器:Controller<br>Servlet<br>1.接收用户的请求<br>2.交给业务层去做(返回数据)<br>3.视图跳转")
+    B --> |转发或者重定向| C
+    B --> F("Service")
+    F --> B
+    F --> D(Dao)
+    D --> F
+    D --> |JDBC| E(数据库)
+```
+
+**Model**
+
+* 业务处理：业务逻辑（Service）
+* 数据持久层：CRUD（Dao）
+
+**View**
+
+* 展示数据
+* 提供连接发起Servlet请求（a, form, img ...）
+
+**Controller(Servlet)**
+
+* 接收用户的请求：(req：请求参数、Session信息...)
+* 交给业务层处理对应的代码
+* 控制视图的跳转
+
+```text
+登录--->接收用户的请求--->处理用户的请求（获取用户登录的参数，username，password）--->交给业务层处理登录业务（判断用户名密码是否正确：事务）--->Dao层查询用户名和密码是否正确--->数据库
+```
+
+
+
+## Filter过滤器（重点）
+
+Filter：过滤器，用来过滤网站的数据
+
+* 处理中文乱码
+* 登录验证
+* ……
+
+```mermaid
+graph LR
+A(Web浏览器) --> B(Web服务器)
+	B --> A
+	B --> C("过滤器<br>Web服务有一些垃圾请求，<br>后台不应该处理或者应该报错<br><br>处理乱码问题")
+	C --> B
+	C --> D("Servlet<br>JSP<br>HTML<br>静态资源<br>……")
+	D --> C
+```
+
+Filter开发步骤
+
+1. 导包
+
+2. 编写过滤器
+
+   1. 实现Filter接口
+
+      ![filter](img\filter.png)
+
+   2. 重写对应的方法
+
+   ```java
+   public class CharacterEncodingFilter implements Filter {
+   
+       // 初始化：web服务器启动的时候调用
+       public void init(FilterConfig filterConfig) throws ServletException {
+           System.out.println("CharacterEncodingFilter初始化");
+       }
+   
+       // filterChain：链
+       /*
+       1. 过滤中的所有代码，在过滤特定请求的时候会执行（在web.xml中配置）
+       2. 必须要让过滤器继续通行
+       filterChain.doFilter(servletRequest, servletResponse);
+        */
+       public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+           servletRequest.setCharacterEncoding("utf-8");
+           servletResponse.setCharacterEncoding("utf-8");
+           servletResponse.setContentType("text/html;charset=UTF-8");
+   
+           System.out.println("doFilter执行前");
+           filterChain.doFilter(servletRequest, servletResponse);
+           System.out.println("doFilter执行后");
+       }
+   
+       // 销毁：web服务器关闭的时候调用
+       public void destroy() {
+           System.out.println("CharacterEncodingFilter");
+       }
+   }
+   ```
+
+   
+
+3. 在web.xml中配置过滤规则
+
+   ```xml
+   <filter>
+       <filter-name>characterEncodingFilter</filter-name>
+       <filter-class>top.aranlzh.filter.CharacterEncodingFilter</filter-class>
+   </filter>
+   <filter-mapping>
+       <filter-name>characterEncodingFilter</filter-name>
+       <url-pattern>/filter/*</url-pattern>
+   </filter-mapping>
+   ```
+
+
+
+## 监听器
+
+实现一个监听器的接口（监听器接口有N种）
+
+1. 实现监听器接口
+
+2. 重写对应的方法
+
+   ```Java
+   public class OnlineCountListener implements HttpSessionListener {
+   
+       // 创建session监听
+       public void sessionCreated(HttpSessionEvent httpSessionEvent) {
+           System.out.println("创建Session，ID："+httpSessionEvent.getSession().getId());
+   
+           ServletContext servletContext = httpSessionEvent.getSession().getServletContext();
+   
+           Integer onlineCount = (Integer) servletContext.getAttribute("OnlineCount");
+   
+           if (onlineCount==null) {
+               onlineCount = new Integer(1);
+           } else {
+               int count = onlineCount.intValue();
+               onlineCount = new Integer(++count);
+           }
+   
+           servletContext.setAttribute("OnlineCount", onlineCount);
+   
+       }
+   
+       // 销毁session监听
+   
+       /*
+       1. 手动销毁 getSession().invalidate();
+       2. 设置过期时间
+        */
+       public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
+           System.out.println("销毁Session，ID："+httpSessionEvent.getSession().getId());
+   
+           ServletContext servletContext = httpSessionEvent.getSession().getServletContext();
+   
+           Integer onlineCount = (Integer) servletContext.getAttribute("OnlineCount");
+   
+           if (onlineCount==null) {
+               onlineCount = new Integer(0);
+           } else {
+               int count = onlineCount.intValue();
+               onlineCount = new Integer(--count);
+           }
+   
+           servletContext.setAttribute("OnlineCount", onlineCount);
+   
+       }
+   }
+   ```
+
+3. 配置监听器
+
+   ```xml
+   <listener>
+       <listener-class>top.aranlzh.listener.OnlineCountListener</listener-class>
+   </listener>
+   
+   <!--配置session自动过期时间，方便观察-->
+   <session-config>
+       <session-timeout>1</session-timeout>
+   </session-config>
+   ```
 
