@@ -325,7 +325,8 @@ int SC_GATEWAY_TIMEOUT = 504;
 int SC_HTTP_VERSION_NOT_SUPPORTED = 505;
 ```
 #### 常见应用
-**向浏览器输出消息**
+##### **向浏览器输出消息**
+
 ```java
 public class ErrorServlet extends HttpServlet {
     @Override
@@ -342,7 +343,8 @@ public class ErrorServlet extends HttpServlet {
     }
 }
 ```
-**下载文件**
+##### **下载文件**
+
 * 要获取下载文件的路径
 * 下载的文件名是啥？
 * 设置想办法让浏览器能够支持下载我们需要的东西
@@ -388,7 +390,8 @@ public class FileServlet extends HttpServlet {
     }
 }
 ```
-**验证码功能**
+##### **验证码功能**
+
 * 前端实现
 * 后端实现，需要用到Java的图片类，生成图片，然后通过response设置返回输出给浏览器
 ```java
@@ -440,10 +443,12 @@ public class ImageServlet extends HttpServlet {
     }
 }
 ```
-**实现重定向**
+##### **实现重定向**
+
 ![重定向](img/redirect.png)
 一个web资源（B）收到客户端（A）请求后，他会通知客户端（A）去访问另外一个web资源（C），这个过程叫重定向。
 常见场景：
+
 * 用户登录
 ```java
 void sendRedirect(String location) throws IOException;
@@ -1066,6 +1071,20 @@ JSTL标签库的使用是为了弥补HTML标签的不足；它自定义许多标
 
 
 
+### 7. Attribute和Parameter的区别
+
+request.getParameter取得Web客户端(jsp)到web服务端的http请求数据(get/post)，只能是string类型的；而HttpServletRequest没有对应的setParameter()方法。
+如利用href(url)和form请求服务器时，表单数据通过parameter传递到服务器，且只能为字符串。
+当两个web组件为链接关系时，被链接组件通过getParameter来获取请求参数。
+
+request.getAttribute():当两个web组件为转发关系时，通过getAttribute()和setAttribute()来共享request范围内的数据。attrubute中的数据是Object类型的，通过attribute传递的数据只会存在于web容器内部，仅仅是请求处理阶段。
+request.setAttribute是服务器把这个对象放在该页面对应的一块内存中，当发生服务器转发时，会把这块内存拷到另一页面对应的内存中，这样getAttribute就可以取到值，session也一样，只是对象在内存的生命周期不一样。
+
+小结：request.getAttribute()方法返回request范围内存在的对象，request.getParameter()获取http请求提交过来的数据。
+一般的Web应用，基本上是post方式的传递，用getParameter取值。对于自己控制的，可以通过request.setAttribute和getAttribute实现值的传递。
+
+
+
 ## JavaBean（实体类）
 
 JavaBean有特定的写法：
@@ -1179,7 +1198,7 @@ A(人) --> C(视图层:View<br>JSP<br>1.展示数据<br>2.提供用户操作)
 Filter：过滤器，用来过滤网站的数据
 
 * 处理中文乱码
-* 登录验证
+* 登录鉴权
 * ……
 
 ```mermaid
@@ -1192,6 +1211,8 @@ A(Web浏览器) --> B(Web服务器)
 	D --> C
 ```
 
+
+
 Filter开发步骤
 
 1. 导包
@@ -1200,7 +1221,7 @@ Filter开发步骤
 
    1. 实现Filter接口
 
-      ![filter](img\filter.png)
+      ![filter](img/filter.png)
 
    2. 重写对应的方法
 
@@ -1254,7 +1275,7 @@ Filter开发步骤
 
 ## 监听器
 
-实现一个监听器的接口（监听器接口有N种）
+GUI编程中经常使用，通过实现一个监听器的接口（监听器接口有N种）
 
 1. 实现监听器接口
 
@@ -1320,4 +1341,293 @@ Filter开发步骤
        <session-timeout>1</session-timeout>
    </session-config>
    ```
+
+
+
+## JDBC
+
+什么是JDBC：Java Database Connectivity（Java数据库连接）
+
+```mermaid
+graph TD
+A(Application)
+A-->F(统一驱动<br>JDBC)
+F-->B(MySQL驱动<br>mysql.Driver)
+F-->C(Oracle驱动<br>oracle.Driver)
+B-->D(MySQL)
+C-->E(Oracle)
+```
+
+需要jar包的支持：
+
+1. 导入数据库依赖
+
+   ```xml
+   <dependency>
+       <groupId>mysql</groupId>
+       <artifactId>mysql-connector-java</artifactId>
+       <version>8.0.17</version>
+   </dependency>
+   ```
+
+2. IDEA可以连接数据库查看
+
+   ![jdbc](img/jdbc.png)
+
+3. **编写JDBC代码（固定步骤）**
+
+   1. 加载驱动
+   2. 连接数据库，代表数据库
+   3. 创建向数据库发送SQL的对象Statement：CRUD
+   4. 编写SQL
+   5. 执行SQL
+   6. 关闭连接
+
+
+
+普通SQL
+
+```java
+public static void main(String[] args) throws ClassNotFoundException, SQLException {
+   String url ="jdbc:mysql://localhost:3306/ssmbuild?useUnicode=true&characterEncoding=UTF-8";
+   String username = "root";
+   String password = "123456";
+
+   // 1. 加载驱动
+   Class.forName("com.mysql.cj.jdbc.Driver");
+   // 2. 连接数据库，代表数据库
+   Connection connection = DriverManager.getConnection(url, username, password);
+   // 3. 向数据库发送SQL的对象Statement
+   Statement statement = connection.createStatement();
+   // 4. 编写SQL
+   String sql = "select * from books;";
+   // 5. 执行SQL，返回一个ResultSet：结果集
+   ResultSet resultSet = statement.executeQuery(sql);
+   while (resultSet.next()) {
+       System.out.println("bookID:"+resultSet.getObject("bookID"));
+       System.out.println("bookName:"+resultSet.getObject("bookName"));
+       System.out.println("bookCounts:"+resultSet.getObject("bookCounts"));
+       System.out.println("detail:"+resultSet.getObject("detail"));
+   }
+   // 6. 关闭链接，释放资源（一定要做） 先开后关
+   resultSet.close();
+   statement.close();
+   connection.close();
+
+}
+```
+
+预编译SQL
+
+```java
+public static void main(String[] args) throws ClassNotFoundException, SQLException {
+    String url ="jdbc:mysql://localhost:3306/ssmbuild?useUnicode=true&characterEncoding=UTF-8";
+    String username = "root";
+    String password = "123456";
+
+    // 1. 加载驱动
+    Class.forName("com.mysql.cj.jdbc.Driver");
+    // 2. 连接数据库，代表数据库
+    Connection connection = DriverManager.getConnection(url, username, password);
+
+    // 3. 编写SQL
+    String sql = "INSERT into books(bookID, bookName, bookCounts, detail) VALUES (?,?,?,?)";
+
+    // 4. 向数据库发送SQL的对象Statement
+    PreparedStatement preparedStatement = connection.prepareStatement(sql);
+    preparedStatement.setInt(1,5);
+    preparedStatement.setString(2,"Netty实战");
+    preparedStatement.setInt(3,5);
+    preparedStatement.setString(4,"Netty实战教学");
+
+
+    // 5. 执行SQL
+    int i = preparedStatement.executeUpdate();
+    if (i>0) {
+        System.out.println("插入成功");
+    }
+
+    // 6. 关闭链接，释放资源（一定要做） 先开后关
+    preparedStatement.close();
+    connection.close();
+
+}
+```
+
+**事务**
+
+要么都成功，要么都失败！
+
+ACID原则：保证数据安全。
+
+```sql
+start translation; # 开启事务
+# SQL操作
+# 事务提交 commit
+# 事务回滚 rollback
+# 关闭事务
+```
+
+```java
+@Test
+public  void test() {
+    String url ="jdbc:mysql://localhost:3306/ssmbuild?useUnicode=true&characterEncoding=UTF-8";
+    String username = "root";
+    String password = "123456";
+    Connection connection = null;
+
+    try {
+        // 1. 加载驱动
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        // 2. 连接数据库，代表数据库
+        connection = DriverManager.getConnection(url, username, password);
+
+        // 3.通知数据库开启事务
+        connection.setAutoCommit(false);
+
+        String sql = "update books set bookCounts = bookCounts-1 where bookID=5;";
+        connection.prepareStatement(sql).executeUpdate();
+
+
+        // 制造错误
+        int i = 1 / 0;
+
+        String sql1 = "update books set bookCounts = bookCounts-1 where bookID=1;";
+        connection.prepareStatement(sql1).executeUpdate();
+
+        // 以上两条sql都执行成功，就提交事务
+        connection.commit();
+        System.out.println("执行成功");
+    } catch (Exception e) {
+        e.printStackTrace();
+        try {
+            // 如果出现异常，就通知数据库回滚
+            connection.rollback();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }finally {
+        // 6. 关闭链接，释放资源（一定要做） 先开后关
+        if (connection!=null){
+            try {
+                connection.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+**Junit单元测试**
+
+依赖
+
+```xml
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.12</version>
+</dependency>
+```
+
+简单使用
+
+@Test 注解只能在方法上使用，只要加了这个注解的方法，就可以直接运行
+
+```
+@Test
+public void test(){
+	System.out.print("Hello");
+}
+```
+
+
+
+## 文件上传
+
+
+
+## 发送邮件
+
+
+
+
+
+```Java
+// 发件人账号相关
+Properties prop = new Properties();
+// 主机
+prop.put("mail.host", "host"); // 邮件服务器，类似smtp.163.com
+// 使用smtp身份验证
+prop.put("mail.smtp.auth", "true");
+
+if (Integer.parseInt(mailMap.get("safeCode").toString()) == 1){
+    // 使用SSL开启安全协议
+    MailSSLSocketFactory sf = null;
+    try {
+        sf = new MailSSLSocketFactory();
+        sf.setTrustAllHosts(true);
+    } catch (GeneralSecurityException e) {
+        log.error("mail session", e);
+    }
+    prop.put("mail.smtp.port", 465);
+    prop.put("mail.smtp.ssl.enable", "true");
+    prop.put("mail.smtp.ssl.socketFactory", sf);
+} else if (Integer.parseInt(mailMap.get("safeCode").toString()) == 2){
+    prop.put("mail.smtp.port", 587);
+    prop.put("mail.smtp.starttls.enable", "true");
+    prop.put("mail.smtp.timeout","125000");
+} else {
+    prop.put("mail.smtp.port", 25);
+}
+
+//获取Session对象
+Session session = Session.getDefaultInstance(prop,new Authenticator() {
+    //此访求返回用户和密码的对象
+    @Override
+    protected PasswordAuthentication getPasswordAuthentication() {
+        PasswordAuthentication pa = new PasswordAuthentication(form.getUsername(), form.getPassword());
+        return pa;
+    }
+});
+
+// 设置邮件相关
+MimeMessage message = new MimeMessage(session);
+try {
+    message.setFrom(new InternetAddress(from)); // 发件人邮箱地址
+    message.setRecipients(Message.RecipientType.TO, address); // 收件人邮箱地址
+    message.setSubject(title); // 主题  
+
+    // 一个Multipart对象包含一个或多个BodyPart对象，来组成邮件的正文部分（包括附件）。
+    MimeMultipart multiPart = new MimeMultipart();
+
+    // 添加正文
+    MimeBodyPart partText = new MimeBodyPart();
+    partText.setContent(content, "text/html;charset=utf-8");
+    multiPart.addBodyPart(partText);
+
+    //邮件附件
+    if (attachments != null) {
+        for (File attachment : attachments) {
+            BodyPart attachmentPart = new MimeBodyPart();
+            DataSource source = new FileDataSource(attachment);
+            attachmentPart.setDataHandler(new DataHandler(source));
+            //避免中文乱码的处理
+            attachmentPart.setFileName(MimeUtility.encodeWord(attachment.getName()));
+            multiPart.addBodyPart(attachmentPart);
+        }
+    }
+    message.setContent(multiPart);
+    Transport.send(message);
+} catch (Exception e) {
+    e.printStackTrace();
+}
+
+
+```
+
+
+
+
 

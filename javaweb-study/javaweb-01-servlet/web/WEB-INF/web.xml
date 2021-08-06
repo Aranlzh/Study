@@ -51,7 +51,7 @@
 
     <servlet>
         <servlet-name>filedown</servlet-name>
-        <servlet-class>top.aranlzh.response.FileServlet</servlet-class>
+        <servlet-class>top.aranlzh.response.FileDownloadServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>filedown</servlet-name>

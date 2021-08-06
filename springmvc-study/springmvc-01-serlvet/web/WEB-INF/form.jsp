@@ -11,7 +11,7 @@
     <title>Title</title>
 </head>
 <body>
-<form action="/hello" method="post">
+<form action="${pageContext.request.contextPath}/hello" method="post">
     <input type="text" name="method">
     <input type="submit">
 </form>
