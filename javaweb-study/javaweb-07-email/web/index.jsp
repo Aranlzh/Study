@@ -11,6 +11,12 @@
     <title>$Title$</title>
   </head>
   <body>
-  $END$
+  <form action="${pageContext.request.contextPath}/sendEmail" method="post" enctype="multipart/form-data">
+    <p>收件人：<input type="text" name="username"></p>
+    <p>主题：<input type="text" name="title"></p>
+    <p>内容：<input type="text" name="content"></p>
+<%--    <p>附件：<input type="file" name="file"></p>--%>
+    <p><input type="submit" value="提交"> | <input type="reset"></p>
+  </form>
   </body>
 </html>
