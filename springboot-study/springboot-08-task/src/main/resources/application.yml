@@ -1,0 +1,14 @@
+spring:
+  mail:
+    host: 1
+    username: 1
+    password: 1
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          port: 465
+          ssl:
+            enable: true
+
+

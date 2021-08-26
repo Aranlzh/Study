@@ -1,0 +1,8 @@
+# 测试这个需要在单独项目中，而不是模块中，模块中resource外的失效
+# 顺序为：
+# file:./config/
+# file:./
+# classpath:./config/
+# classpath:./
+server:
+  port: 8082

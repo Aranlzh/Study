@@ -1,0 +1,40 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /
+
+
+# 数据对象
+student:
+  name: a
+  age: 18
+  pets: cat,dog,pig
+
+
+# 行内写法
+student1: {name: b,age: 18}
+
+# 数组
+pets1:
+  list:
+    - cat
+    - dog
+    - pig
+
+pets2: [cat,dog,pig]
+
+# 对象
+person:
+  name: test${random.uuid}
+  age: ${random.int}
+  happy: true
+  birthday: 2020/08/11
+  maps: {k1: v1,k2: v2}
+  hello: 开心
+  lists:
+    - code
+    - music
+    - coffee
+  dog:
+    name: ${person.hello:旺柴}狗
+    age: 3

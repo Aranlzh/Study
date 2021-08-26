@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: prod
+
+# 这种写法不能写在别的文件中
+---
+server:
+  port: 8086
+spring:
+  profiles: prod
+
+# 可以查看哪些自动配置类生效了，哪些不生效
+#debug: true
